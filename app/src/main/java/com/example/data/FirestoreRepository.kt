@@ -2,6 +2,10 @@ package com.example.data
 
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
+import com.google.firebase.firestore.ListenerRegistration
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 
 class FirestoreRepository {
 
@@ -16,6 +20,27 @@ class FirestoreRepository {
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
+            // 👇 ADD THIS FUNCTION HERE
+    fun observeCredits(): Flow<List<CreditEntity>> = callbackFlow {
+
+        val listener: ListenerRegistration =
+            db.collection("credits")
+                .addSnapshotListener { snapshot, error ->
+
+                    if (error != null) {
+                        close(error)
+                        return@addSnapshotListener
+                    }
+
+                    val credits = snapshot?.documents?.mapNotNull {
+                        it.toObject(CreditEntity::class.java)
+                    } ?: emptyList()
+
+                    trySend(credits)
+                }
+
+        awaitClose {
+            listener.remove()
         }
     }
 }
