@@ -216,7 +216,6 @@ class LedgerRepository(private val ledgerDao: LedgerDao) {
     // Save to Firestore
     firestoreRepository.saveCredit(credit)
 }
-    }
 
     suspend fun addDebitAccount(debit: DebitAccountEntity) {
         ledgerDao.insertDebitAccount(debit)
