@@ -1,0 +1,6 @@
+{
+  "name": "Smoking Barrel Ledger",
+  "description": "Unified dashboard, real-time sync, and offline logging for Smoking Barrel financial ledgers.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
