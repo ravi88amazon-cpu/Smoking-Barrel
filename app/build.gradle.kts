@@ -119,8 +119,8 @@ dependencies {
   androidTestImplementation(libs.androidx.runner)
   debugImplementation(libs.androidx.compose.ui.test.manifest)
   debugImplementation(libs.androidx.compose.ui.tooling)
-  implementation("com.google.firebase:firebase-firestore-ktx")
-implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1")
+  implementation(libs.firebase.firestore)
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1")
   "ksp"(libs.androidx.room.compiler)
   "ksp"(libs.moshi.kotlin.codegen)
 }
