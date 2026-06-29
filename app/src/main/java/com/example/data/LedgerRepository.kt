@@ -14,6 +14,7 @@ import java.io.IOException
 class LedgerRepository(private val ledgerDao: LedgerDao) {
 
     private val client = OkHttpClient()
+    private val firestoreRepository = FirestoreRepository()
 
     val allCredits: Flow<List<CreditEntity>> = ledgerDao.getAllCredits()
     val allDebitsAccount: Flow<List<DebitAccountEntity>> = ledgerDao.getAllDebitsAccount()
@@ -208,7 +209,13 @@ class LedgerRepository(private val ledgerDao: LedgerDao) {
 
     // Local Insert Actions
     suspend fun addCredit(credit: CreditEntity) {
-        ledgerDao.insertCredit(credit)
+
+    // Save locally
+    ledgerDao.insertCredit(credit)
+
+    // Save to Firestore
+    firestoreRepository.saveCredit(credit)
+}
     }
 
     suspend fun addDebitAccount(debit: DebitAccountEntity) {
