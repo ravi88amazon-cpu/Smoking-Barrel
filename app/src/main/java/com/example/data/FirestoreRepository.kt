@@ -5,23 +5,38 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
+import java.util.UUID
 
 class FirestoreRepository {
 
     private val db = FirebaseFirestore.getInstance()
 
     // Save Credit
-    suspend fun saveCredit(credit: CreditEntity): Result<Unit> {
-        return try {
-            db.collection("credits")
-                .add(credit)
-                .await()
+suspend fun saveCredit(credit: CreditEntity): Result<Unit> {
 
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+    return try {
+
+        val cloudId =
+            if (credit.cloudId.isBlank())
+                UUID.randomUUID().toString()
+            else
+                credit.cloudId
+
+        val cloudCredit = credit.copy(
+            cloudId = cloudId
+        )
+
+        db.collection("credits")
+            .document(cloudId)
+            .set(cloudCredit)
+            .await()
+
+        Result.success(Unit)
+
+    } catch (e: Exception) {
+        Result.failure(e)
     }
+}
 
     // Save Debit Account
     suspend fun saveDebitAccount(debit: DebitAccountEntity): Result<Unit> {
