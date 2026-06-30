@@ -51,26 +51,36 @@ suspend fun saveDebitHand(debit: DebitHandEntity): Result<Unit> {
 }
 
     // Observe Credits (Realtime)
-    fun observeCredits(): Flow<List<CreditEntity>> = callbackFlow {
+fun observeCredits(): Flow<List<CreditEntity>> = callbackFlow {
 
-        val listener: ListenerRegistration =
-            db.collection("credits")
-                .addSnapshotListener { snapshot, error ->
+    val listener = db.collection("credits")
+        .addSnapshotListener { snapshot, error ->
 
-                    if (error != null) {
-                        close(error)
-                        return@addSnapshotListener
+            if (error != null) {
+                error.printStackTrace()
+                trySend(emptyList())
+                return@addSnapshotListener
+            }
+
+            try {
+                val credits = snapshot?.documents?.mapNotNull { document ->
+                    try {
+                        document.toObject(CreditEntity::class.java)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        null
                     }
+                } ?: emptyList()
 
-                    val credits = snapshot?.documents?.mapNotNull {
-                        it.toObject(CreditEntity::class.java)
-                    } ?: emptyList()
+                trySend(credits)
 
-                    trySend(credits)
-                }
-
-        awaitClose {
-            listener.remove()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                trySend(emptyList())
+            }
         }
+
+    awaitClose {
+        listener.remove()
     }
 }
