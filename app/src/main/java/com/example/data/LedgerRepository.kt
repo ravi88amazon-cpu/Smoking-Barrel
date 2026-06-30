@@ -62,6 +62,10 @@ val allDebitsHand: Flow<List<DebitHandEntity>> = ledgerDao.getAllDebitsHand()
             if (!creditsResponse.isSuccessful) throw IOException("Failed to fetch credits CSV: $creditsResponse")
             val creditsBody = creditsResponse.body?.string() ?: ""
             val parsedCredits = parseCreditsCsv(creditsBody)
+            if (parsedCredits.isEmpty()) {
+                throw Exception("No Credit records were parsed from Google Sheets")
+            }
+            Log.d("LedgerRepository", "Parsed Credits = ${parsedCredits.size}")
 
             // 2. Fetch Debits Account
             val debitsAccountRequest = Request.Builder().url(debitAccountUrl).build()
@@ -82,12 +86,15 @@ val allDebitsHand: Flow<List<DebitHandEntity>> = ledgerDao.getAllDebitsHand()
             // we can clear database and insert remote ones, but preserve local-only ones.
             ledgerDao.clearCredits()
             ledgerDao.insertCredits(parsedCredits)
+            Log.d("LedgerRepository", "Inserted Credits into Room = ${parsedCredits.size}")
 
             ledgerDao.clearDebitsAccount()
             ledgerDao.insertDebitsAccount(parsedDebitsAccount)
 
             ledgerDao.clearDebitsHand()
             ledgerDao.insertDebitsHand(parsedDebitsHand)
+
+            Log.d("LedgerRepository", "Sheets sync completed successfully")
 
             Result.success(Unit)
         } catch (e: Exception) {
