@@ -16,9 +16,16 @@ class LedgerRepository(private val ledgerDao: LedgerDao) {
     private val client = OkHttpClient()
     private val firestoreRepository = FirestoreRepository()
 
-    val allCredits: Flow<List<CreditEntity>> = ledgerDao.getAllCredits()
-    val allDebitsAccount: Flow<List<DebitAccountEntity>> = ledgerDao.getAllDebitsAccount()
-    val allDebitsHand: Flow<List<DebitHandEntity>> = ledgerDao.getAllDebitsHand()
+    // Room
+val allCreditsRoom: Flow<List<CreditEntity>> = ledgerDao.getAllCredits()
+
+// Firestore
+val allCreditsFirestore: Flow<List<CreditEntity>> =
+    firestoreRepository.observeCredits()
+
+// Room
+val allDebitsAccount: Flow<List<DebitAccountEntity>> = ledgerDao.getAllDebitsAccount()
+val allDebitsHand: Flow<List<DebitHandEntity>> = ledgerDao.getAllDebitsHand()
 
     // Base Spreadsheet URLs
     private val spreadsheetId = "1_BplFZTeKDMhWyKE4v_r2aJlw3ihZfrb"
