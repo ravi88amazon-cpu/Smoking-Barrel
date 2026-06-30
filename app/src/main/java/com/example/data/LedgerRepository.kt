@@ -289,4 +289,17 @@ val allDebitsHand: Flow<List<DebitHandEntity>> = ledgerDao.getAllDebitsHand()
             Result.failure(e)
         }
     }
+        suspend fun replaceCreditsFromFirestore(
+        credits: List<CreditEntity>
+    ) = withContext(Dispatchers.IO) {
+
+        ledgerDao.clearCredits()
+
+        ledgerDao.insertCredits(credits)
+
+        Log.d(
+            "SyncManager",
+            "Room updated with ${credits.size} Firestore credits"
+        )
+    }
 }
