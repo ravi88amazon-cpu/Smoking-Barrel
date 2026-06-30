@@ -48,7 +48,7 @@ class LedgerViewModel(
     val isGeneratingReport: StateFlow<Boolean> = _isGeneratingReport.asStateFlow()
 
     // Raw flows from Database
-    val credits: StateFlow<List<CreditEntity>> = repository.allCreditsFirestore
+    val credits: StateFlow<List<CreditEntity>> = repository.allCreditsRoom
     .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
     
     val debitsAccount: StateFlow<List<DebitAccountEntity>> = repository.allDebitsAccount
