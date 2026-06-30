@@ -28,6 +28,7 @@ class LedgerViewModel(
 
     private val sharedPrefs = application.getSharedPreferences("smoking_barrel_prefs", Context.MODE_PRIVATE)
     private val geminiService = com.example.data.GeminiService()
+    private val syncManager = com.example.data.SyncManager(repository)
 
     // Apps Script URL state
     private val _appsScriptUrl = MutableStateFlow(sharedPrefs.getString("apps_script_url", "") ?: "")
@@ -65,25 +66,40 @@ class LedgerViewModel(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), DashboardSummary())
 
     init {
-        // Only run sheets import automatically once on first boot if database is empty,
-        // so the user starts with all their historical spreadsheet records imported.
-        // After that, the app is 100% local and standalone!
-        viewModelScope.launch {
-            val hasImported = sharedPrefs.getBoolean("has_imported_initial_data", false)
-            if (!hasImported) {
-                _isSyncing.value = true
-                _syncMessage.value = "Importing historical records from Google Sheets..."
-                val result = repository.fetchAndSyncFromSheets()
-                _isSyncing.value = false
-                if (result.isSuccess) {
-                    sharedPrefs.edit().putBoolean("has_imported_initial_data", true).apply()
-                    _syncMessage.value = "Import successful! Ledger is now 100% local."
-                } else {
-                    _syncMessage.value = "Started local ledger. Import can be retried in settings."
-                }
+
+    syncManager.startSync()
+
+    // Only run sheets import automatically once on first boot if database is empty,
+    // so the user starts with all their historical spreadsheet records imported.
+    viewModelScope.launch {
+
+        val hasImported =
+            sharedPrefs.getBoolean("has_imported_initial_data", false)
+
+        if (!hasImported) {
+
+            _isSyncing.value = true
+            _syncMessage.value =
+                "Importing historical records from Google Sheets..."
+
+            val result = repository.fetchAndSyncFromSheets()
+
+            _isSyncing.value = false
+
+            if (result.isSuccess) {
+                sharedPrefs.edit()
+                    .putBoolean("has_imported_initial_data", true)
+                    .apply()
+
+                _syncMessage.value =
+                    "Import successful! Ledger is now 100% local."
+            } else {
+                _syncMessage.value =
+                    "Started local ledger. Import can be retried in settings."
             }
         }
     }
+}
 
     fun saveAppsScriptUrl(url: String) {
         _appsScriptUrl.value = url
