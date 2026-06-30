@@ -232,8 +232,11 @@ val allDebitsHand: Flow<List<DebitHandEntity>> = ledgerDao.getAllDebitsHand()
 }
 
     suspend fun addDebitHand(debit: DebitHandEntity) {
-        ledgerDao.insertDebitHand(debit)
-    }
+
+    ledgerDao.insertDebitHand(debit)
+
+    firestoreRepository.saveDebitHand(debit)
+}
 
     suspend fun deleteCredit(id: Int) {
         ledgerDao.deleteCredit(id)

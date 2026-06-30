@@ -37,6 +37,19 @@ class FirestoreRepository {
         }
     }
 
+    // Save Debit Hand
+suspend fun saveDebitHand(debit: DebitHandEntity): Result<Unit> {
+    return try {
+        db.collection("debitHands")
+            .add(debit)
+            .await()
+
+        Result.success(Unit)
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
+}
+
     // Observe Credits (Realtime)
     fun observeCredits(): Flow<List<CreditEntity>> = callbackFlow {
 
