@@ -14,7 +14,12 @@ import kotlinx.coroutines.flow.Flow
 
 @Entity(tableName = "credits")
 data class CreditEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+
+    val cloudId: String = "",
+
     val date: String,
     val vendor: String,
     val productName: String,
@@ -25,6 +30,7 @@ data class CreditEntity(
     val salesPrice: Double,
     val totalPrice: Double,
     val paymentStatus: String,
+
     val isSynced: Boolean = false
 )
 
