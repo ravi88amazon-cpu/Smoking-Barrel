@@ -11,6 +11,7 @@ class FirestoreRepository {
 
     private val db = FirebaseFirestore.getInstance()
 
+    // Save Credit
     suspend fun saveCredit(credit: CreditEntity): Result<Unit> {
         return try {
             db.collection("credits")
@@ -23,6 +24,20 @@ class FirestoreRepository {
         }
     }
 
+    // Save Debit Account
+    suspend fun saveDebitAccount(debit: DebitAccountEntity): Result<Unit> {
+        return try {
+            db.collection("debitAccounts")
+                .add(debit)
+                .await()
+
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    // Observe Credits (Realtime)
     fun observeCredits(): Flow<List<CreditEntity>> = callbackFlow {
 
         val listener: ListenerRegistration =
