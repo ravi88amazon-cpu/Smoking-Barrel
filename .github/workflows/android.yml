@@ -5,7 +5,8 @@ on:
     branches:
       - main
       - firestore-migration
-    workflow_dispatch:
+      - firestore-v3
+  workflow_dispatch:
 
 jobs:
   build:
