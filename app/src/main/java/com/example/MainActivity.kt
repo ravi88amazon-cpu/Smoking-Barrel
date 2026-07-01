@@ -1,6 +1,7 @@
 package com.example
 
 import android.app.Application
+import com.example.ui.CreditViewModel
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -141,6 +142,8 @@ class MainActivity : ComponentActivity() {
                         repository = repository
                     )
                 )
+
+                val creditViewModel: CreditViewModel = viewModel()
 
                 MainScreen(viewModel = viewModel)
             }
