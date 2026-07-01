@@ -221,14 +221,17 @@ val allDebitsHand: Flow<List<DebitHandEntity>> = ledgerDao.getAllDebitsHand()
         return list
     }
 
-    // Local Insert Actions
-    suspend fun addCredit(credit: CreditEntity) {
+ suspend fun addCredit(credit: CreditEntity) {
 
     // Save locally
     ledgerDao.insertCredit(credit)
 
     // Save to Firestore
-    firestoreRepository.saveCredit(credit)
+    val result = firestoreRepository.saveCredit(credit)
+
+    if (result.isFailure) {
+        throw result.exceptionOrNull() ?: Exception("Unknown Firestore error")
+    }
 }
 
     suspend fun addDebitAccount(debit: DebitAccountEntity) {
