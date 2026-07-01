@@ -20,20 +20,22 @@ data class CreditEntity(
 
     val cloudId: String = "",
 
-    val date: String,
-    val vendor: String,
-    val productName: String,
-    val productType: String,
-    val numberOfProduct: Int,
-    val costPerProduct: Double,
-    val costOfProduct: Double,
-    val salesPrice: Double,
-    val totalPrice: Double,
-    val paymentStatus: String,
+    val date: String = "",
+    val vendor: String = "",
+    val productName: String = "",
+    val productType: String = "",
+
+    val numberOfProduct: Int = 0,
+
+    val costPerProduct: Double = 0.0,
+    val costOfProduct: Double = 0.0,
+    val salesPrice: Double = 0.0,
+    val totalPrice: Double = 0.0,
+
+    val paymentStatus: String = "",
 
     val isSynced: Boolean = false
 )
-
 @Entity(tableName = "debits_account")
 data class DebitAccountEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
