@@ -143,12 +143,7 @@ class MainActivity : ComponentActivity() {
                     )
                 )
 
-                val creditViewModel: CreditViewModel = viewModel()
-
-                MainScreen(
-    viewModel = viewModel,
-    creditViewModel = creditViewModel
-)
+ MainScreen(viewModel = viewModel)
             }
         }
     }
@@ -156,15 +151,12 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(
-    viewModel: LedgerViewModel,
-    creditViewModel: CreditViewModel
-) {
+fun MainScreen(viewModel: LedgerViewModel) {
     val context = LocalContext.current
     var activeTab by remember { mutableStateOf("Dashboard") }
 
     // Observers
-    val credits by creditViewModel.credits.collectAsState()
+    val credits by viewModel.credits.collectAsState()
     val debitsAccount by viewModel.debitsAccount.collectAsState()
     val debitsHand by viewModel.debitsHand.collectAsState()
     val summary by viewModel.dashboardState.collectAsState()
