@@ -145,7 +145,10 @@ class MainActivity : ComponentActivity() {
 
                 val creditViewModel: CreditViewModel = viewModel()
 
-                MainScreen(viewModel = viewModel)
+                MainScreen(
+    viewModel = viewModel,
+    creditViewModel = creditViewModel
+)
             }
         }
     }
@@ -153,7 +156,10 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(viewModel: LedgerViewModel) {
+fun MainScreen(
+    viewModel: LedgerViewModel,
+    creditViewModel: CreditViewModel
+) {
     val context = LocalContext.current
     var activeTab by remember { mutableStateOf("Dashboard") }
 
