@@ -158,7 +158,7 @@ fun MainScreen(viewModel: LedgerViewModel) {
     var activeTab by remember { mutableStateOf("Dashboard") }
 
     // Observers
-    val credits by viewModel.credits.collectAsState()
+    val credits by creditViewModel.credits.collectAsState()
     val debitsAccount by viewModel.debitsAccount.collectAsState()
     val debitsHand by viewModel.debitsHand.collectAsState()
     val summary by viewModel.dashboardState.collectAsState()
