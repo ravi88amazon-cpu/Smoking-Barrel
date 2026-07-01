@@ -67,38 +67,10 @@ class LedgerViewModel(
 
     init {
 
+    // Start realtime sync from Firestore
     syncManager.startSync()
 
-    // Only run sheets import automatically once on first boot if database is empty,
-    // so the user starts with all their historical spreadsheet records imported.
-    viewModelScope.launch {
-
-        val hasImported =
-            sharedPrefs.getBoolean("has_imported_initial_data", false)
-
-        if (!hasImported) {
-
-            _isSyncing.value = true
-            _syncMessage.value =
-                "Importing historical records from Google Sheets..."
-
-            val result = repository.fetchAndSyncFromSheets()
-
-            _isSyncing.value = false
-
-            if (result.isSuccess) {
-                sharedPrefs.edit()
-                    .putBoolean("has_imported_initial_data", true)
-                    .apply()
-
-                _syncMessage.value =
-                    "Import successful! Ledger is now 100% local."
-            } else {
-                _syncMessage.value =
-                    "Started local ledger. Import can be retried in settings."
-            }
-        }
-    }
+    _syncMessage.value = "Connected to Firestore"
 }
 
     fun saveAppsScriptUrl(url: String) {
