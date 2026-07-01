@@ -224,7 +224,7 @@ class LedgerViewModel(
                 totalPrice = totalPrice,
                 isSynced = false // Ensure it's marked as locally entered/modified
             )
-            repository.addCredit(updated)
+            repository.updateCredit(updated)
         }
     }
 

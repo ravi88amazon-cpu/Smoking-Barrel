@@ -38,6 +38,26 @@ suspend fun saveCredit(credit: CreditEntity): Result<Unit> {
     }
 }
 
+suspend fun updateCredit(credit: CreditEntity): Result<Unit> {
+
+    return try {
+
+        if (credit.cloudId.isBlank()) {
+            return Result.failure(Exception("Cloud ID is missing"))
+        }
+
+        db.collection("credits")
+            .document(credit.cloudId)
+            .set(credit)
+            .await()
+
+        Result.success(Unit)
+
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
+}
+
     // Save Debit Account
     suspend fun saveDebitAccount(debit: DebitAccountEntity): Result<Unit> {
         return try {

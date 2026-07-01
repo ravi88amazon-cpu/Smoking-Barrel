@@ -234,6 +234,18 @@ val allDebitsHand: Flow<List<DebitHandEntity>> = ledgerDao.getAllDebitsHand()
     }
 }
 
+suspend fun updateCredit(credit: CreditEntity) {
+
+    ledgerDao.insertCredit(credit)
+
+    val result = firestoreRepository.updateCredit(credit)
+
+    if (result.isFailure) {
+        throw result.exceptionOrNull()
+            ?: Exception("Failed to update Firestore")
+    }
+}
+
     suspend fun addDebitAccount(debit: DebitAccountEntity) {
 
     ledgerDao.insertDebitAccount(debit)
