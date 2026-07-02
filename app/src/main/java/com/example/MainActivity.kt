@@ -1195,7 +1195,7 @@ private fun getDebitMonthYear(dateStr: String): String {
 @Composable
 fun DebitsView(
     debitsAccount: List<DebitAccountEntity>,
-    onDeleteAccount: (DebitAccountEntity) -> Unit
+    onDeleteAccount: (DebitAccountEntity) -> Unit,
     onEditAccount: (DebitAccountEntity) -> Unit
 ) {
     var selectedMonthYear by remember { mutableStateOf("All Months") }
@@ -4127,7 +4127,7 @@ fun MetricDetailsModal(
                                     )
                                 }
                                 is UnifiedTransaction.DebitAccount -> {
-                                    DebitAccountCardItem(debit = item.entity, onEdit = { activeEditDebitAccount = item.entity }, onDelete = { onDeleteDebitAccount(item.entity) })
+                                    DebitAccountCardItem(debit = item.entity, onEdit = {  }, onDelete = { onDeleteDebitAccount(item.entity) })
                                 }
                                 is UnifiedTransaction.DebitHand -> {
                                     DebitHandCardItem(debit = item.entity, onDelete = { onDeleteDebitHand(item.entity) })
