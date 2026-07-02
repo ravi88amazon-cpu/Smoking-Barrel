@@ -3,6 +3,7 @@ package com.example.ui
 import android.app.Application
 import android.content.Context
 import android.util.Log
+import java.util.UUID
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -138,18 +139,19 @@ class LedgerViewModel(
             val costOfProduct = numberOfProduct * costPerProduct
             val totalPrice = numberOfProduct * salesPrice
             val credit = CreditEntity(
-                date = date,
-                vendor = vendor,
-                productName = productName,
-                productType = productType,
-                numberOfProduct = numberOfProduct,
-                costPerProduct = costPerProduct,
-                costOfProduct = costOfProduct,
-                salesPrice = salesPrice,
-                totalPrice = totalPrice,
-                paymentStatus = paymentStatus,
-                isSynced = false
-            )
+    cloudId = UUID.randomUUID().toString(),
+    date = date,
+    vendor = vendor,
+    productName = productName,
+    productType = productType,
+    numberOfProduct = numberOfProduct,
+    costPerProduct = costPerProduct,
+    costOfProduct = costOfProduct,
+    salesPrice = salesPrice,
+    totalPrice = totalPrice,
+    paymentStatus = paymentStatus,
+    isSynced = false
+)
             repository.addCredit(credit)
             attemptRemoteSync("Credit", credit)
         }
