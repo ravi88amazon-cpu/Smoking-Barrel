@@ -25,7 +25,7 @@ val allCreditsFirestore: Flow<List<CreditEntity>> =
 
 // Room
 val allDebitsAccount: Flow<List<DebitAccountEntity>> = firestoreRepository.observeDebitAccounts()
-val allDebitsHand: Flow<List<DebitHandEntity>> = ledgerDao.getAllDebitsHand()
+val allDebitsHand: Flow<List<DebitHandEntity>> = firestoreRepository.observeDebitHands()
 
     // Base Spreadsheet URLs
     private val spreadsheetId = "1_BplFZTeKDMhWyKE4v_r2aJlw3ihZfrb"
@@ -273,7 +273,6 @@ suspend fun deleteDebitAccount(debit: DebitAccountEntity) {
         throw result.exceptionOrNull()
             ?: Exception("Failed to delete debit account")
     }
-}
 
     suspend fun addDebitHand(debit: DebitHandEntity) {
 
@@ -287,8 +286,14 @@ if (result.isFailure) {
 }
 }
 
-    suspend fun deleteDebitHand(id: Int) {
-    ledgerDao.deleteDebitHand(id)
+    suspend fun deleteDebitHand(debit: DebitHandEntity) {
+
+    val result = firestoreRepository.deleteDebitHand(debit.cloudId)
+
+    if (result.isFailure) {
+        throw result.exceptionOrNull()
+            ?: Exception("Failed to delete debit hand")
+    }
 }
 
 suspend fun deleteCredit(credit: CreditEntity) {
