@@ -249,7 +249,7 @@ suspend fun addCredit(credit: CreditEntity) {
 
     ledgerDao.insertDebitAccount(debit)
 
-    firestoreRepository.saveDebitAccount(debit)
+    firestoreRepository.addDebitAccount(debit)
 }
 
     suspend fun addDebitHand(debit: DebitHandEntity) {
