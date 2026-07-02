@@ -38,18 +38,26 @@ data class CreditEntity(
 )
 @Entity(tableName = "debits_account")
 data class DebitAccountEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val date: String,
-    val source: String,
-    val productName: String,
-    val productType: String,
-    val numberOfProduct: Int,
-    val costPerProduct: Double,
-    val totalPrice: Double,
-    val paymentStatus: String,
+
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+
+    val cloudId: String = "",
+
+    val date: String = "",
+    val source: String = "",
+    val productName: String = "",
+    val productType: String = "",
+
+    val numberOfProduct: Int = 0,
+
+    val costPerProduct: Double = 0.0,
+    val totalPrice: Double = 0.0,
+
+    val paymentStatus: String = "",
+
     val isSynced: Boolean = false
 )
-
 @Entity(tableName = "debits_hand")
 data class DebitHandEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,

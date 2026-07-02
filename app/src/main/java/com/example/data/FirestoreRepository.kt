@@ -71,6 +71,37 @@ class FirestoreRepository {
     }
 
     // -----------------------------
+// READ - Debit Account
+// -----------------------------
+fun observeDebitAccounts(): Flow<List<DebitAccountEntity>> = callbackFlow {
+
+    val listener =
+        db.collection("debitAccounts")
+            .addSnapshotListener { snapshot, error ->
+
+                if (error != null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
+
+                val list =
+                    snapshot?.documents?.mapNotNull { doc ->
+
+                        doc.toObject(DebitAccountEntity::class.java)?.copy(
+                            cloudId = doc.id
+                        )
+
+                    } ?: emptyList()
+
+                trySend(list)
+            }
+
+    awaitClose {
+        listener.remove()
+    }
+}
+
+    // -----------------------------
     // UPDATE
     // -----------------------------
     suspend fun updateCredit(
@@ -115,22 +146,33 @@ class FirestoreRepository {
     // -----------------------------
     // Debit Account
     // -----------------------------
-    suspend fun saveDebitAccount(
-        debit: DebitAccountEntity
-    ): Result<Unit> {
+    suspend fun addDebitAccount(
+    debit: DebitAccountEntity
+): Result<Unit> {
 
-        return try {
+    return try {
 
-            db.collection("debitAccounts")
-                .add(debit)
-                .await()
+        val cloudId =
+            if (debit.cloudId.isBlank())
+                UUID.randomUUID().toString()
+            else
+                debit.cloudId
 
-            Result.success(Unit)
+        val newDebit = debit.copy(
+            cloudId = cloudId
+        )
 
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+        db.collection("debitAccounts")
+            .document(cloudId)
+            .set(newDebit)
+            .await()
+
+        Result.success(Unit)
+
+    } catch (e: Exception) {
+        Result.failure(e)
     }
+}
 
     // -----------------------------
     // Debit Hand
