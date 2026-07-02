@@ -272,7 +272,6 @@ suspend fun addDebitHand(
         Result.failure(e)
     }
 }
-}
 
 // -----------------------------
 // UPDATE
@@ -314,4 +313,6 @@ suspend fun deleteDebitHand(
     } catch (e: Exception) {
         Result.failure(e)
     }
+}
+
 }
