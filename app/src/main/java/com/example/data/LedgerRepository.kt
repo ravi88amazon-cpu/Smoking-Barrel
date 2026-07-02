@@ -223,16 +223,6 @@ val allDebitsHand: Flow<List<DebitHandEntity>> = ledgerDao.getAllDebitsHand()
 
  suspend fun updateCredit(credit: CreditEntity) {
 
-    val result = firestoreRepository.updateCredit(credit)
-
-    if (result.isFailure) {
-        throw result.exceptionOrNull()
-            ?: Exception("Failed to update credit")
-    }
-}
-
-suspend fun updateCredit(credit: CreditEntity) {
-
     ledgerDao.insertCredit(credit)
 
     val result = firestoreRepository.updateCredit(credit)
@@ -240,6 +230,18 @@ suspend fun updateCredit(credit: CreditEntity) {
     if (result.isFailure) {
         throw result.exceptionOrNull()
             ?: Exception("Failed to update Firestore")
+    }
+}
+
+suspend fun addCredit(credit: CreditEntity) {
+
+    ledgerDao.insertCredit(credit)
+
+    val result = firestoreRepository.addCredit(credit)
+
+    if (result.isFailure) {
+        throw result.exceptionOrNull()
+            ?: Exception("Failed to add credit")
     }
 }
 
