@@ -1336,7 +1336,7 @@ fun DebitsView(
                 }
 
                 items(filteredDebitsAccount) { debit ->
-                    DebitAccountCardItem(debit = debit, onDelete = { onDeleteAccount(debit) })
+                    DebitAccountCardItem(debit = debit, onEdit = {// Temporary},onDelete = { onDeleteAccount(debit) })
                 }
 
                 item {
@@ -1522,7 +1522,7 @@ fun InvestmentView(
 }
 
 @Composable
-fun DebitAccountCardItem(debit: DebitAccountEntity, onDelete: () -> Unit) {
+fun DebitAccountCardItem(debit: DebitAccountEntity, onEdit: () -> Unit, onDelete: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -1554,6 +1554,14 @@ fun DebitAccountCardItem(debit: DebitAccountEntity, onDelete: () -> Unit) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     StatusBadge(statusText = debit.paymentStatus)
                     Spacer(modifier = Modifier.width(8.dp))
+                    IconButton(
+    onClick = onEdit
+) {
+    Icon(
+        imageVector = Icons.Default.Edit,
+        contentDescription = "Edit"
+    )
+}
                     IconButton(
                         onClick = onDelete,
                         modifier = Modifier.size(24.dp)
