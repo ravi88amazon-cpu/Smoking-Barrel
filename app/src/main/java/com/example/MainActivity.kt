@@ -1353,7 +1353,7 @@ fun DebitsView(
                     DebitAccountCardItem(
     debit = debit,
     onEdit = {
-        // Temporary
+        activeEditDebitAccount = debit
     },
     onDelete = {
         onDeleteAccount(debit)
@@ -3228,6 +3228,198 @@ fun EditCreditDialog(
 }
 
 @Composable
+fun EditDebitAccountDialog(
+    debit: DebitAccountEntity,
+    onDismiss: () -> Unit,
+    onSave: (DebitAccountEntity) -> Unit
+) {
+
+    var date by remember { mutableStateOf(debit.date) }
+    var source by remember { mutableStateOf(debit.source) }
+    var productName by remember { mutableStateOf(debit.productName) }
+    var productType by remember { mutableStateOf(debit.productType) }
+    var qtyString by remember { mutableStateOf(debit.numberOfProduct.toString()) }
+    var costPerString by remember { mutableStateOf(debit.costPerProduct.toString()) }
+    var paymentStatus by remember { mutableStateOf(debit.paymentStatus) }
+
+    Dialog(onDismissRequest = onDismiss) {
+
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            shape = RoundedCornerShape(16.dp),
+            color = LedgerColors.CardBg
+        ) {
+
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+
+                Text(
+                    text = "Edit Expense Entry",
+                    color = Color.White,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                OutlinedTextField(
+    value = date,
+    onValueChange = { date = it },
+    label = { Text("Date (e.g. 29-Jun-26)") },
+    singleLine = true,
+    modifier = Modifier.fillMaxWidth()
+)
+
+OutlinedTextField(
+    value = source,
+    onValueChange = { source = it },
+    label = { Text("Source") },
+    singleLine = true,
+    modifier = Modifier.fillMaxWidth()
+)
+
+OutlinedTextField(
+    value = productName,
+    onValueChange = { productName = it },
+    label = { Text("Product Name") },
+    singleLine = true,
+    modifier = Modifier.fillMaxWidth()
+)
+
+OutlinedTextField(
+    value = productType,
+    onValueChange = { productType = it },
+    label = { Text("Product Type") },
+    singleLine = true,
+    modifier = Modifier.fillMaxWidth()
+)
+
+Row(
+    horizontalArrangement = Arrangement.spacedBy(8.dp)
+) {
+
+    OutlinedTextField(
+        value = qtyString,
+        onValueChange = { qtyString = it },
+        label = { Text("Quantity") },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        modifier = Modifier.weight(1f)
+    )
+
+    OutlinedTextField(
+        value = costPerString,
+        onValueChange = { costPerString = it },
+        label = { Text("Cost/Product") },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        modifier = Modifier.weight(1f)
+    )
+}
+
+Text(
+    text = "Payment Status",
+    color = LedgerColors.SlateGrayText,
+    fontSize = 12.sp
+)
+
+Row(
+    horizontalArrangement = Arrangement.spacedBy(8.dp)
+) {
+
+    listOf(
+        "Payment received",
+        "Payment yet to Receive"
+    ).forEach { status ->
+
+        val selected = paymentStatus == status
+
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(8.dp))
+                .background(
+                    if (selected)
+                        Color(0xFFF97316)
+                    else
+                        LedgerColors.DeepInk
+                )
+                .clickable {
+                    paymentStatus = status
+                }
+                .padding(horizontal = 12.dp, vertical = 6.dp)
+        ) {
+
+            Text(
+                text = if (status == "Payment yet to Receive")
+                    "Pending"
+                else
+                    "Received",
+                color = if (selected)
+                    Color.White
+                else
+                    LedgerColors.SlateGrayText,
+                fontWeight = FontWeight.Bold,
+                fontSize = 11.sp
+            )
+        }
+    }
+}
+
+Spacer(modifier = Modifier.height(10.dp))
+Row(
+    modifier = Modifier.fillMaxWidth(),
+    horizontalArrangement = Arrangement.End,
+    verticalAlignment = Alignment.CenterVertically
+) {
+
+    TextButton(
+        onClick = onDismiss
+    ) {
+        Text(
+            "Cancel",
+            color = LedgerColors.SlateGrayText
+        )
+    }
+
+    Spacer(modifier = Modifier.width(8.dp))
+
+    Button(
+        onClick = {
+
+            val qty = qtyString.toIntOrNull() ?: 0
+            val cost = costPerString.toDoubleOrNull() ?: 0.0
+
+            onSave(
+                debit.copy(
+                    date = date,
+                    source = source,
+                    productName = productName,
+                    productType = productType,
+                    numberOfProduct = qty,
+                    costPerProduct = cost,
+                    totalPrice = qty * cost,
+                    paymentStatus = paymentStatus
+                )
+            )
+        },
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color(0xFFF97316)
+        )
+    ) {
+        Text(
+            "Save Changes",
+            color = Color.White
+        )
+    }
+}
+
+            }
+        }
+    }
+}
+
+@Composable
 fun AddCreditDialog(
     onDismiss: () -> Unit,
     onSave: (date: String, vendor: String, pName: String, pType: String, qty: Int, costPer: Double, sales: Double, status: String) -> Unit
@@ -3929,7 +4121,7 @@ fun MetricDetailsModal(
                                     )
                                 }
                                 is UnifiedTransaction.DebitAccount -> {
-                                    DebitAccountCardItem(debit = item.entity, onEdit = { }, onDelete = { onDeleteDebitAccount(item.entity) })
+                                    DebitAccountCardItem(debit = item.entity, onEdit = { activeEditDebitAccount = item.entity }, onDelete = { onDeleteDebitAccount(item.entity) })
                                 }
                                 is UnifiedTransaction.DebitHand -> {
                                     DebitHandCardItem(debit = item.entity, onDelete = { onDeleteDebitHand(item.entity) })
