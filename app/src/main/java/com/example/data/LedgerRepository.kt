@@ -282,6 +282,20 @@ suspend fun deleteDebitAccount(debit: DebitAccountEntity) {
     firestoreRepository.saveDebitHand(debit)
 }
 
+    suspend fun deleteDebitHand(id: Int) {
+    ledgerDao.deleteDebitHand(id)
+}
+
+suspend fun deleteCredit(credit: CreditEntity) {
+
+    val result = firestoreRepository.deleteCredit(credit.cloudId)
+
+    if (result.isFailure) {
+        throw result.exceptionOrNull()
+            ?: Exception("Failed to delete credit")
+    }
+}
+
     suspend fun deleteCredit(credit: CreditEntity) {
 
     val result = firestoreRepository.deleteCredit(credit.cloudId)
