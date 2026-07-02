@@ -237,6 +237,18 @@ class LedgerViewModel(
     }
 }
 
+    fun updateDebitAccountItem(debit: DebitAccountEntity) {
+    viewModelScope.launch {
+
+        val updated = debit.copy(
+            totalPrice = debit.numberOfProduct * debit.costPerProduct,
+            isSynced = false
+        )
+
+        repository.updateDebitAccount(updated)
+    }
+}
+
     fun deleteDebitHandItem(debit: DebitHandEntity) {
         viewModelScope.launch {
             repository.deleteDebitHand(debit.id)
