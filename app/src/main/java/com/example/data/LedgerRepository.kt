@@ -227,7 +227,7 @@ val allDebitsHand: Flow<List<DebitHandEntity>> = ledgerDao.getAllDebitsHand()
     ledgerDao.insertCredit(credit)
 
     // Save to Firestore
-    val result = firestoreRepository.saveCredit(credit)
+    val result = firestoreRepository.addCredit(credit)
 
     if (result.isFailure) {
         throw result.exceptionOrNull() ?: Exception("Unknown Firestore error")
