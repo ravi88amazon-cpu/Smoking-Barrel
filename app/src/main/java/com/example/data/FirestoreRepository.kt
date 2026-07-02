@@ -174,6 +174,42 @@ fun observeDebitAccounts(): Flow<List<DebitAccountEntity>> = callbackFlow {
     }
 }
 
+suspend fun updateDebitAccount(
+    debit: DebitAccountEntity
+): Result<Unit> {
+
+    return try {
+
+        db.collection("debitAccounts")
+            .document(debit.cloudId)
+            .set(debit)
+            .await()
+
+        Result.success(Unit)
+
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
+}
+
+suspend fun deleteDebitAccount(
+    cloudId: String
+): Result<Unit> {
+
+    return try {
+
+        db.collection("debitAccounts")
+            .document(cloudId)
+            .delete()
+            .await()
+
+        Result.success(Unit)
+
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
+}
+
     // -----------------------------
     // Debit Hand
     // -----------------------------

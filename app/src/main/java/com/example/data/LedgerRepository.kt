@@ -24,7 +24,7 @@ val allCreditsFirestore: Flow<List<CreditEntity>> =
     firestoreRepository.observeCredits()
 
 // Room
-val allDebitsAccount: Flow<List<DebitAccountEntity>> = ledgerDao.getAllDebitsAccount()
+val allDebitsAccount: Flow<List<DebitAccountEntity>> = firestoreRepository.observeDebitAccounts()
 val allDebitsHand: Flow<List<DebitHandEntity>> = ledgerDao.getAllDebitsHand()
 
     // Base Spreadsheet URLs
