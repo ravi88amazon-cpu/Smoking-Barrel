@@ -370,9 +370,14 @@ fun MainScreen(viewModel: LedgerViewModel) {
                     onEditClick = { activeEditCredit = it }
                 )
                 "Expenses" -> DebitsView(
-                    debitsAccount = debitsAccount,
-                    onDeleteAccount = { viewModel.deleteDebitAccountItem(it) }
-                )
+    debitsAccount = debitsAccount,
+    onDeleteAccount = {
+        viewModel.deleteDebitAccountItem(it)
+    },
+    onEditAccount = {
+        activeEditDebitAccount = it
+    }
+)
                 "Investment" -> InvestmentView(
                     debitsHand = debitsHand,
                     onDeleteHand = { viewModel.deleteDebitHandItem(it) }
@@ -1191,6 +1196,7 @@ private fun getDebitMonthYear(dateStr: String): String {
 fun DebitsView(
     debitsAccount: List<DebitAccountEntity>,
     onDeleteAccount: (DebitAccountEntity) -> Unit
+    onEditAccount: (DebitAccountEntity) -> Unit
 ) {
     var selectedMonthYear by remember { mutableStateOf("All Months") }
 
@@ -1350,16 +1356,16 @@ fun DebitsView(
                 }
 
                 items(filteredDebitsAccount) { debit ->
-                    DebitAccountCardItem(
-    debit = debit,
-    onEdit = {
-        activeEditDebitAccount = debit
-    },
-    onDelete = {
-        onDeleteAccount(debit)
-    }
-)
-                }
+    DebitAccountCardItem(
+        debit = debit,
+        onEdit = {
+            onEditAccount(debit)
+        },
+        onDelete = {
+            onDeleteAccount(debit)
+        }
+    )
+}
 
                 item {
                     Spacer(modifier = Modifier.height(80.dp))
