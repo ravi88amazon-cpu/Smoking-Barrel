@@ -169,6 +169,7 @@ class LedgerViewModel(
         viewModelScope.launch {
             val totalPrice = numberOfProduct * costPerProduct
             val debit = DebitAccountEntity(
+                cloudId = UUID.randomUUID().toString(),
                 date = date,
                 source = source,
                 productName = productName,
@@ -231,10 +232,10 @@ class LedgerViewModel(
     }
 
     fun deleteDebitAccountItem(debit: DebitAccountEntity) {
-        viewModelScope.launch {
-            repository.deleteDebitAccount(debit.id)
-        }
+    viewModelScope.launch {
+        repository.deleteDebitAccount(debit)
     }
+}
 
     fun deleteDebitHandItem(debit: DebitHandEntity) {
         viewModelScope.launch {

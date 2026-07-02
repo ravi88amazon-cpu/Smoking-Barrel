@@ -247,9 +247,32 @@ suspend fun addCredit(credit: CreditEntity) {
 
     suspend fun addDebitAccount(debit: DebitAccountEntity) {
 
-    ledgerDao.insertDebitAccount(debit)
+    val result = firestoreRepository.addDebitAccount(debit)
 
-    firestoreRepository.addDebitAccount(debit)
+    if (result.isFailure) {
+        throw result.exceptionOrNull()
+            ?: Exception("Failed to add debit account")
+    }
+}
+
+suspend fun updateDebitAccount(debit: DebitAccountEntity) {
+
+    val result = firestoreRepository.updateDebitAccount(debit)
+
+    if (result.isFailure) {
+        throw result.exceptionOrNull()
+            ?: Exception("Failed to update debit account")
+    }
+}
+
+suspend fun deleteDebitAccount(debit: DebitAccountEntity) {
+
+    val result = firestoreRepository.deleteDebitAccount(debit.cloudId)
+
+    if (result.isFailure) {
+        throw result.exceptionOrNull()
+            ?: Exception("Failed to delete debit account")
+    }
 }
 
     suspend fun addDebitHand(debit: DebitHandEntity) {
@@ -268,14 +291,6 @@ suspend fun addCredit(credit: CreditEntity) {
             ?: Exception("Failed to delete credit")
     }
 }
-
-    suspend fun deleteDebitAccount(id: Int) {
-        ledgerDao.deleteDebitAccount(id)
-    }
-
-    suspend fun deleteDebitHand(id: Int) {
-        ledgerDao.deleteDebitHand(id)
-    }
 
     // Post to Google Apps Script Web App
     suspend fun syncItemToGoogleSheet(
