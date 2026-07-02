@@ -279,7 +279,12 @@ suspend fun deleteDebitAccount(debit: DebitAccountEntity) {
 
     ledgerDao.insertDebitHand(debit)
 
-    firestoreRepository.saveDebitHand(debit)
+    val result = firestoreRepository.addDebitHand(debit)
+
+if (result.isFailure) {
+    throw result.exceptionOrNull()
+        ?: Exception("Failed to add debit hand")
+}
 }
 
     suspend fun deleteDebitHand(id: Int) {

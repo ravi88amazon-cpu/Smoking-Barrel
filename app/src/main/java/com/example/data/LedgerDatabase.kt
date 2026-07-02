@@ -60,7 +60,11 @@ data class DebitAccountEntity(
 )
 @Entity(tableName = "debits_hand")
 data class DebitHandEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+
+    val cloudId: String = "",
+
     val date: String,
     val spentBy: String,
     val vendor: String,
