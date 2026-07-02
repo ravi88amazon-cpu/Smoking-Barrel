@@ -213,20 +213,104 @@ suspend fun deleteDebitAccount(
     // -----------------------------
     // Debit Hand
     // -----------------------------
-    suspend fun saveDebitHand(
-        debit: DebitHandEntity
-    ): Result<Unit> {
+    // -----------------------------
+// READ - Debit Hand
+// -----------------------------
+fun observeDebitHands(): Flow<List<DebitHandEntity>> = callbackFlow {
 
-        return try {
+    val listener =
+        db.collection("debitHands")
+            .addSnapshotListener { snapshot, error ->
 
-            db.collection("debitHands")
-                .add(debit)
-                .await()
+                if (error != null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
 
-            Result.success(Unit)
+                val list =
+                    snapshot?.documents?.mapNotNull { doc ->
+                        doc.toObject(DebitHandEntity::class.java)?.copy(
+                            cloudId = doc.id
+                        )
+                    } ?: emptyList()
 
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+                trySend(list)
+            }
+
+    awaitClose {
+        listener.remove()
+    }
+}
+
+// -----------------------------
+// CREATE
+// -----------------------------
+suspend fun addDebitHand(
+    debit: DebitHandEntity
+): Result<Unit> {
+
+    return try {
+
+        val cloudId =
+            if (debit.cloudId.isBlank())
+                UUID.randomUUID().toString()
+            else
+                debit.cloudId
+
+        val newDebit = debit.copy(
+            cloudId = cloudId
+        )
+
+        db.collection("debitHands")
+            .document(cloudId)
+            .set(newDebit)
+            .await()
+
+        Result.success(Unit)
+
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
+}
+
+// -----------------------------
+// UPDATE
+// -----------------------------
+suspend fun updateDebitHand(
+    debit: DebitHandEntity
+): Result<Unit> {
+
+    return try {
+
+        db.collection("debitHands")
+            .document(debit.cloudId)
+            .set(debit)
+            .await()
+
+        Result.success(Unit)
+
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
+}
+
+// -----------------------------
+// DELETE
+// -----------------------------
+suspend fun deleteDebitHand(
+    cloudId: String
+): Result<Unit> {
+
+    return try {
+
+        db.collection("debitHands")
+            .document(cloudId)
+            .delete()
+            .await()
+
+        Result.success(Unit)
+
+    } catch (e: Exception) {
+        Result.failure(e)
     }
 }
