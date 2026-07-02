@@ -11,112 +11,144 @@ class FirestoreRepository {
 
     private val db = FirebaseFirestore.getInstance()
 
-    // Save Credit
-suspend fun saveCredit(credit: CreditEntity): Result<Unit> {
-
-    return try {
-
-        val cloudId =
-            if (credit.cloudId.isBlank())
-                UUID.randomUUID().toString()
-            else
-                credit.cloudId
-
-        val cloudCredit = credit.copy(
-            cloudId = cloudId
-        )
-
-        db.collection("credits")
-            .document(cloudId)
-            .set(cloudCredit)
-            .await()
-
-        Result.success(Unit)
-
-    } catch (e: Exception) {
-        Result.failure(e)
-    }
-}
-
-suspend fun updateCredit(credit: CreditEntity): Result<Unit> {
-
-    return try {
-
-        if (credit.cloudId.isBlank()) {
-            return Result.failure(Exception("Cloud ID is missing"))
-        }
-
-        db.collection("credits")
-            .document(credit.cloudId)
-            .set(credit)
-            .await()
-
-        Result.success(Unit)
-
-    } catch (e: Exception) {
-        Result.failure(e)
-    }
-}
-
-    // Save Debit Account
-    suspend fun saveDebitAccount(debit: DebitAccountEntity): Result<Unit> {
+    // -----------------------------
+    // CREATE
+    // -----------------------------
+    suspend fun addCredit(credit: CreditEntity): Result<Unit> {
         return try {
-            db.collection("debitAccounts")
-                .add(debit)
+
+            val cloudId =
+                if (credit.cloudId.isBlank())
+                    UUID.randomUUID().toString()
+                else
+                    credit.cloudId
+
+            val newCredit = credit.copy(
+                cloudId = cloudId
+            )
+
+            db.collection("credits")
+                .document(cloudId)
+                .set(newCredit)
                 .await()
 
             Result.success(Unit)
+
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    // Save Debit Hand
-    suspend fun saveDebitHand(debit: DebitHandEntity): Result<Unit> {
-        return try {
-            db.collection("debitHands")
-                .add(debit)
-                .await()
-
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    // Observe Credits (Realtime)
+    // -----------------------------
+    // READ
+    // -----------------------------
     fun observeCredits(): Flow<List<CreditEntity>> = callbackFlow {
 
-        val listener = db.collection("credits")
-            .addSnapshotListener { snapshot, error ->
+        val listener =
+            db.collection("credits")
+                .addSnapshotListener { snapshot, error ->
 
-                if (error != null) {
-                    error.printStackTrace()
-                    trySend(emptyList())
-                    return@addSnapshotListener
+                    if (error != null) {
+                        close(error)
+                        return@addSnapshotListener
+                    }
+
+                    val list =
+                        snapshot?.documents?.mapNotNull { doc ->
+
+                            doc.toObject(CreditEntity::class.java)?.copy(
+                                cloudId = doc.id
+                            )
+
+                        } ?: emptyList()
+
+                    trySend(list)
                 }
-
-                try {
-                    val credits = snapshot?.documents?.mapNotNull { document ->
-                        try {
-                            document.toObject(CreditEntity::class.java)
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                            null
-                        }
-                    } ?: emptyList()
-
-                    trySend(credits)
-
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    trySend(emptyList())
-                }
-            }
 
         awaitClose {
             listener.remove()
         }
     }
 
+    // -----------------------------
+    // UPDATE
+    // -----------------------------
+    suspend fun updateCredit(
+        credit: CreditEntity
+    ): Result<Unit> {
+
+        return try {
+
+            db.collection("credits")
+                .document(credit.cloudId)
+                .set(credit)
+                .await()
+
+            Result.success(Unit)
+
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    // -----------------------------
+    // DELETE
+    // -----------------------------
+    suspend fun deleteCredit(
+        cloudId: String
+    ): Result<Unit> {
+
+        return try {
+
+            db.collection("credits")
+                .document(cloudId)
+                .delete()
+                .await()
+
+            Result.success(Unit)
+
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    // -----------------------------
+    // Debit Account
+    // -----------------------------
+    suspend fun saveDebitAccount(
+        debit: DebitAccountEntity
+    ): Result<Unit> {
+
+        return try {
+
+            db.collection("debitAccounts")
+                .add(debit)
+                .await()
+
+            Result.success(Unit)
+
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    // -----------------------------
+    // Debit Hand
+    // -----------------------------
+    suspend fun saveDebitHand(
+        debit: DebitHandEntity
+    ): Result<Unit> {
+
+        return try {
+
+            db.collection("debitHands")
+                .add(debit)
+                .await()
+
+            Result.success(Unit)
+
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }
