@@ -172,6 +172,7 @@ fun MainScreen(viewModel: LedgerViewModel) {
     var showResetConfirmDialog by remember { mutableStateOf(false) }
     var activeMetricDetail by remember { mutableStateOf<String?>(null) }
     var activeEditCredit by remember { mutableStateOf<CreditEntity?>(null) }
+    var activeEditDebitAccount by remember { mutableStateOf<DebitAccountEntity?>(null) }
 
     // Toast of sync state changes
     remember(syncMessage) {
@@ -399,6 +400,19 @@ fun MainScreen(viewModel: LedgerViewModel) {
             }
         )
     }
+
+    activeEditDebitAccount?.let { debit ->
+    EditDebitAccountDialog(
+        debit = debit,
+        onDismiss = {
+            activeEditDebitAccount = null
+        },
+        onSave = { updated ->
+            viewModel.updateDebitAccountItem(updated)
+            activeEditDebitAccount = null
+        }
+    )
+}
 
     if (showAddCreditDialog) {
         AddCreditDialog(
