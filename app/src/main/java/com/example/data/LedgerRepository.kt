@@ -296,16 +296,6 @@ suspend fun deleteCredit(credit: CreditEntity) {
     }
 }
 
-    suspend fun deleteCredit(credit: CreditEntity) {
-
-    val result = firestoreRepository.deleteCredit(credit.cloudId)
-
-    if (result.isFailure) {
-        throw result.exceptionOrNull()
-            ?: Exception("Failed to delete credit")
-    }
-}
-
     // Post to Google Apps Script Web App
     suspend fun syncItemToGoogleSheet(
         appsScriptUrl: String,
