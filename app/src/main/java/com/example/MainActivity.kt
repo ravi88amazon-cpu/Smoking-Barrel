@@ -1336,7 +1336,15 @@ fun DebitsView(
                 }
 
                 items(filteredDebitsAccount) { debit ->
-                    DebitAccountCardItem(debit = debit, onEdit = {// Temporary},onDelete = { onDeleteAccount(debit) })
+                    DebitAccountCardItem(
+    debit = debit,
+    onEdit = {
+        // Temporary
+    },
+    onDelete = {
+        onDeleteAccount(debit)
+    }
+)
                 }
 
                 item {
@@ -3907,7 +3915,7 @@ fun MetricDetailsModal(
                                     )
                                 }
                                 is UnifiedTransaction.DebitAccount -> {
-                                    DebitAccountCardItem(debit = item.entity, onDelete = { onDeleteDebitAccount(item.entity) })
+                                    DebitAccountCardItem(debit = item.entity, onEdit = { }, onDelete = { onDeleteDebitAccount(item.entity) })
                                 }
                                 is UnifiedTransaction.DebitHand -> {
                                     DebitHandCardItem(debit = item.entity, onDelete = { onDeleteDebitHand(item.entity) })
