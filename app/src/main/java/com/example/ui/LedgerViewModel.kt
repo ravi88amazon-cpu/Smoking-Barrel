@@ -251,7 +251,7 @@ class LedgerViewModel(
 
     fun deleteDebitHandItem(debit: DebitHandEntity) {
         viewModelScope.launch {
-            repository.deleteDebitHand(debit.id)
+            repository.deleteDebitHand(debit)
         }
     }
 
