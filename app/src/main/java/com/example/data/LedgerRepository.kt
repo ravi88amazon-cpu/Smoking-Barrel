@@ -221,16 +221,13 @@ val allDebitsHand: Flow<List<DebitHandEntity>> = ledgerDao.getAllDebitsHand()
         return list
     }
 
- suspend fun addCredit(credit: CreditEntity) {
+ suspend fun updateCredit(credit: CreditEntity) {
 
-    // Save locally
-    ledgerDao.insertCredit(credit)
-
-    // Save to Firestore
-    val result = firestoreRepository.addCredit(credit)
+    val result = firestoreRepository.updateCredit(credit)
 
     if (result.isFailure) {
-        throw result.exceptionOrNull() ?: Exception("Unknown Firestore error")
+        throw result.exceptionOrNull()
+            ?: Exception("Failed to update credit")
     }
 }
 
@@ -260,9 +257,15 @@ suspend fun updateCredit(credit: CreditEntity) {
     firestoreRepository.saveDebitHand(debit)
 }
 
-    suspend fun deleteCredit(id: Int) {
-        ledgerDao.deleteCredit(id)
+    suspend fun deleteCredit(credit: CreditEntity) {
+
+    val result = firestoreRepository.deleteCredit(credit.cloudId)
+
+    if (result.isFailure) {
+        throw result.exceptionOrNull()
+            ?: Exception("Failed to delete credit")
     }
+}
 
     suspend fun deleteDebitAccount(id: Int) {
         ledgerDao.deleteDebitAccount(id)

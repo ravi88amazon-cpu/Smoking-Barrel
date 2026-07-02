@@ -212,10 +212,10 @@ class LedgerViewModel(
     }
 
     fun deleteCreditItem(credit: CreditEntity) {
-        viewModelScope.launch {
-            repository.deleteCredit(credit.id)
-        }
+    viewModelScope.launch {
+        repository.deleteCredit(credit)
     }
+}
 
     fun updateCreditItem(credit: CreditEntity) {
         viewModelScope.launch {
