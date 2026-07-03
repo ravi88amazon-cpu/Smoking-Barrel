@@ -254,7 +254,7 @@ fun MainScreen(viewModel: LedgerViewModel) {
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        listOf("Dashboard", "Sales", "Expenses").forEach { tabName ->
+                        listOf("Dashboard", "Revenues", "Expenses").forEach { tabName ->
                             val isSelected = activeTab == tabName
                             val bg = if (isSelected) Color(0xFFF97316) else LedgerColors.CardBg
                             val textCol = if (isSelected) Color.White else LedgerColors.SlateGrayText
@@ -284,7 +284,7 @@ fun MainScreen(viewModel: LedgerViewModel) {
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        listOf("Investment", "Reports").forEach { tabName ->
+                        listOf("Investment", "Reports & Settings").forEach { tabName ->
                             val isSelected = activeTab == tabName
                             val bg = if (isSelected) Color(0xFFF97316) else LedgerColors.CardBg
                             val textCol = if (isSelected) Color.White else LedgerColors.SlateGrayText
@@ -363,7 +363,7 @@ fun MainScreen(viewModel: LedgerViewModel) {
                     onPendingClick = { activeMetricDetail = "pending" },
                     onOutOfPocketClick = { activeMetricDetail = "out_of_pocket" }
                 )
-                "Sales" -> CreditsView(
+                "Revenues" -> CreditsView(
                     credits = credits,
                     onDelete = { viewModel.deleteCreditItem(it) },
                     onUpdate = { viewModel.updateCreditItem(it) },
@@ -382,7 +382,7 @@ fun MainScreen(viewModel: LedgerViewModel) {
                     debitsHand = debitsHand,
                     onDeleteHand = { viewModel.deleteDebitHandItem(it) }
                 )
-                "Reports" -> SettingsView(
+                "Reports & Settings" -> SettingsView(
                     viewModel = viewModel,
                     credits = credits,
                     debitsAccount = debitsAccount,
@@ -563,11 +563,11 @@ fun DashboardView(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             MetricCard(
-                title = "Current Bank Balance",
-                value = formatCurrency(summary.bankBalance),
+                title = "Total Amount in Bank",
+                value = "Rs. ${String.format("%,.2f", summary.bankBalance)}",
                 icon = Icons.Default.MonetizationOn,
                 gradient = LedgerColors.GreenGradient,
-                subtitle = "Available Business Balance",
+                subtitle = "Total Ledger Bank Balance",
                 modifier = Modifier.weight(1f),
                 onClick = onBankBalanceClick
             )
@@ -578,20 +578,20 @@ fun DashboardView(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             MetricCard(
-                title = "Sales Received",
-                value = formatCurrency(summary.totalBankCredits),
+                title = "Total Bank Credits",
+                value = "Rs. ${String.format("%,.2f", summary.totalBankCredits)}",
                 icon = Icons.Default.TrendingUp,
                 gradient = LedgerColors.TechGradient,
-                subtitle = "Payments Received",
+                subtitle = "Revenues Collected",
                 modifier = Modifier.weight(1f),
                 onClick = onCreditsClick
             )
             MetricCard(
-                title = "Business Expenses",
-                value = formatCurrency(summary.totalBankDebits),
+                title = "Total Bank Debits",
+                value = "Rs. ${String.format("%,.2f", summary.totalBankDebits)}",
                 icon = Icons.Default.TrendingDown,
                 gradient = LedgerColors.FireGradient,
-                subtitle = "Paid from Bank Account",
+                subtitle = "Account Expenses",
                 modifier = Modifier.weight(1f),
                 onClick = onDebitsClick
             )
@@ -603,21 +603,21 @@ fun DashboardView(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             MetricCard(
-                title = "Outstanding Payments",
+                title = "Pending Payments",
                 value = when (summary.pendingQty) {
-                    0 -> "No Outstanding Payments"
+                    0 -> "None Pending"
                     1 -> "1 Product"
                     else -> "${summary.pendingQty} Products"
                 },
                 icon = Icons.Default.Info,
                 gradient = Brush.horizontalGradient(colors = listOf(Color(0xFFF59E0B), Color(0xFFD97706))),
-                subtitle = "${formatCurrency(summary.pendingPayments)} yet to collect",
+                subtitle = "Rs. ${String.format("%,.2f", summary.pendingPayments)} yet to collect",
                 modifier = Modifier.weight(1f),
                 onClick = onPendingClick
             )
             MetricCard(
-                title = "Investment Made",
-                value = formatCurrency(summary.totalHandExpenses),
+                title = "Invested Amount",
+                value = "Rs. ${String.format("%,.2f", summary.totalHandExpenses)}",
                 icon = Icons.Default.Payments,
                 gradient = Brush.horizontalGradient(colors = listOf(Color(0xFFEC4899), Color(0xFF8B5CF6))),
                 subtitle = "Invested Amount Details",
@@ -634,7 +634,7 @@ fun DashboardView(
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    text = "Partner Investment Summary",
+                    text = "PARTNER INVESTMENT BREAKDOWN",
                     color = Color(0xFFF97316),
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Black,
@@ -642,7 +642,7 @@ fun DashboardView(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Tap a name to view contribution details",
+                    text = "Dynamic Cash Contribution Ledger (Click name to expand)",
                     color = LedgerColors.SlateGrayText,
                     fontSize = 12.sp
                 )
@@ -725,7 +725,7 @@ fun DashboardView(
                                                     Spacer(modifier = Modifier.width(8.dp))
                                                     Column(horizontalAlignment = Alignment.End) {
                                                         Text(
-                                                            text = formatCurrency(item.amount),
+                                                            text = "Rs. ${String.format("%,.2f", item.amount)}",
                                                             color = Color(0xFFF97316),
                                                             fontSize = 13.sp,
                                                             fontWeight = FontWeight.Bold
@@ -985,29 +985,19 @@ fun CreditsView(
                         ) {
                             Column(modifier = Modifier.weight(1f)) {
                                 Text("TOTAL REVENUE", color = LedgerColors.SlateGrayText, fontSize = 9.sp)
-                                Text(formatCurrency(totalRevenue), color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                                Text("Rs. ${String.format("%,.2f", totalRevenue)}", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                             }
                             Column(modifier = Modifier.weight(1f)) {
                                 Text("COLLECTED", color = LedgerColors.NeonGreen, fontSize = 9.sp)
-                                Text(formatCurrency(collectedRevenue), color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                                Text("Rs. ${String.format("%,.2f", collectedRevenue)}", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                             }
-Column(modifier = Modifier.weight(1f)) {
-    Text(
-        "PENDING",
-        color = LedgerColors.AmberOrange,
-        fontSize = 9.sp
-    )
-
-    Text(
-        formatCurrency(pendingRevenue),
-        color = Color.White,
-        fontSize = 14.sp,
-        fontWeight = FontWeight.Bold
-    )
-}            
-}
-        }
-    }
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text("PENDING", color = LedgerColors.AmberOrange, fontSize = 9.sp)
+                                Text("Rs. ${String.format("%,.2f", pendingRevenue)}", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                            }
+                        }
+                    }
+                }
                 
                 Spacer(modifier = Modifier.height(14.dp))
 
@@ -1149,7 +1139,7 @@ fun CreditCardItem(
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = formatCurrency(credit.totalPrice),
+                        text = "Rs. ${String.format("%,.2f", credit.totalPrice)}",
                         color = LedgerColors.MetallicSilver,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Black
@@ -1316,36 +1306,17 @@ fun DebitsView(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
-    Text(
-        "TOTAL EXPENSE",
-        color = LedgerColors.SlateGrayText,
-        fontSize = 9.sp
-    )
-
-    Text(
-        formatCurrency(totalExpense),
-        color = Color.White,
-        fontSize = 14.sp,
-        fontWeight = FontWeight.Bold
-    )
-}
+                            Text("TOTAL EXPENSE", color = LedgerColors.SlateGrayText, fontSize = 9.sp)
+                            Text("Rs. ${String.format("%,.2f", totalExpense)}", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                        }
                         Column(modifier = Modifier.weight(1f)) {
                             Text("CLEARED", color = LedgerColors.NeonGreen, fontSize = 9.sp)
-                            Text(
-    formatCurrency(clearedExpense),
-    color = Color.White,
-    fontSize = 14.sp,
-    fontWeight = FontWeight.Bold
-)
+                            Text("Rs. ${String.format("%,.2f", clearedExpense)}", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                         }
                         Column(modifier = Modifier.weight(1f)) {
                             Text("PENDING", color = LedgerColors.AmberOrange, fontSize = 9.sp)
-                            Text(
-    formatCurrency(pendingExpense),
-    color = Color.White,
-    fontSize = 14.sp,
-    fontWeight = FontWeight.Bold
-)
+                            Text("Rs. ${String.format("%,.2f", pendingExpense)}", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                        }
                     }
                 }
             }
@@ -1518,30 +1489,15 @@ fun InvestmentView(
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text("TOTAL INVESTED", color = LedgerColors.SlateGrayText, fontSize = 9.sp)
-                            Text(
-    formatCurrency(totalInvestment),
-    color = Color.White,
-    fontSize = 14.sp,
-    fontWeight = FontWeight.Bold
-)
+                            Text("Rs. ${String.format("%,.2f", totalInvestment)}", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                         }
                         Column(modifier = Modifier.weight(1f)) {
                             Text("CLEARED", color = LedgerColors.NeonGreen, fontSize = 9.sp)
-                            Text(
-    formatCurrency(clearedInvestment),
-    color = Color.White,
-    fontSize = 14.sp,
-    fontWeight = FontWeight.Bold
-)
+                            Text("Rs. ${String.format("%,.2f", clearedInvestment)}", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                         }
                         Column(modifier = Modifier.weight(1f)) {
                             Text("PENDING", color = LedgerColors.AmberOrange, fontSize = 9.sp)
-                            Text(
-    formatCurrency(pendingInvestment),
-    color = Color.White,
-    fontSize = 14.sp,
-    fontWeight = FontWeight.Bold
-)
+                            Text("Rs. ${String.format("%,.2f", pendingInvestment)}", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                         }
                     }
                 }
@@ -1685,7 +1641,7 @@ fun DebitAccountCardItem(debit: DebitAccountEntity, onEdit: () -> Unit, onDelete
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = formatCurrency(debit.totalPrice),
+                        text = "Rs. ${String.format("%,.2f", debit.totalPrice)}",
                         color = LedgerColors.MetallicSilver,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Black
@@ -1795,7 +1751,7 @@ fun DebitHandCardItem(debit: DebitHandEntity, onDelete: () -> Unit) {
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = formatCurrency(debit.amount),
+                        text = "Rs. ${String.format("%,.2f", debit.amount)}",
                         color = LedgerColors.MetallicSilver,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Black
@@ -4183,9 +4139,6 @@ fun MetricDetailsModal(
             }
         }
     }
-    fun formatCurrency(amount: Double): String {
-    return "₹%,.2f".format(amount)
-}
 }
 
 
