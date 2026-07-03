@@ -60,19 +60,20 @@ data class DebitAccountEntity(
 )
 @Entity(tableName = "debits_hand")
 data class DebitHandEntity(
+
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
 
     val cloudId: String = "",
 
-    val date: String,
-    val spentBy: String,
-    val vendor: String,
-    val description: String,
-    val qty: Double,
-    val rate: Double,
-    val amount: Double,
-    val status: String,
+    val date: String = "",
+    val spentBy: String = "",
+    val vendor: String = "",
+    val description: String = "",
+    val qty: Double = 0.0,
+    val rate: Double = 0.0,
+    val amount: Double = 0.0,
+    val status: String = "",
     val isSynced: Boolean = false
 )
 
