@@ -993,19 +993,19 @@ fun CreditsView(
                             }
 Column(modifier = Modifier.weight(1f)) {
     Text(
-        "TOTAL EXPENSE",
-        color = LedgerColors.SlateGrayText,
+        "PENDING",
+        color = LedgerColors.AmberOrange,
         fontSize = 9.sp
     )
 
     Text(
-        formatCurrency(totalExpense),
+        formatCurrency(pendingRevenue),
         color = Color.White,
         fontSize = 14.sp,
         fontWeight = FontWeight.Bold
     )
-                }
-            }
+}            
+}
         }
     }
                 
