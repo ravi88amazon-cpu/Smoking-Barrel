@@ -229,39 +229,37 @@ fun observeDebitHands(): Flow<List<DebitHandEntity>> = callbackFlow {
 
                 try {
 
-    val list = mutableListOf<DebitHandEntity>()
+                    val list =
+                        snapshot?.documents?.mapNotNull { doc ->
 
-    snapshot?.documents?.forEach { doc ->
+                            try {
+                                doc.toObject(DebitHandEntity::class.java)?.copy(
+                                    cloudId = doc.id
+                                )
+                            } catch (e: Exception) {
+                                android.util.Log.e(
+                                    "DebitHand",
+                                    "Failed document ${doc.id}",
+                                    e
+                                )
+                                null
+                            }
 
-        try {
+                        } ?: emptyList()
 
-            val debit = doc.toObject(DebitHandEntity::class.java)
+                    trySend(list)
 
-            if (debit != null) {
-                list.add(
-                    debit.copy(
-                        cloudId = doc.id
+                } catch (e: Exception) {
+
+                    android.util.Log.e(
+                        "DebitHand",
+                        "Snapshot processing failed",
+                        e
                     )
-                )
+
+                    trySend(emptyList())
+                }
             }
-
-        } catch (e: Exception) {
-
-            android.util.Log.e(
-                "DebitHand",
-                "Failed document: ${doc.id}",
-                e
-            )
-        }
-    }
-
-    trySend(list)
-
-} catch (e: Exception) {
-
-    e.printStackTrace()
-    trySend(emptyList())
-}
 
     awaitClose {
         listener.remove()
