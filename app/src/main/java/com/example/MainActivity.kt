@@ -564,7 +564,7 @@ fun DashboardView(
         ) {
             MetricCard(
                 title = "Current Bank Balance",
-                value = formatCurrency(summary.bankBalance)",
+                value = formatCurrency(summary.bankBalance),
                 icon = Icons.Default.MonetizationOn,
                 gradient = LedgerColors.GreenGradient,
                 subtitle = "Available Business Balance",
@@ -991,13 +991,23 @@ fun CreditsView(
                                 Text("COLLECTED", color = LedgerColors.NeonGreen, fontSize = 9.sp)
                                 Text(formatCurrency(collectedRevenue), color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                             }
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text("PENDING", color = LedgerColors.AmberOrange, fontSize = 9.sp)
-                                Text(formatCurrency(collectedRevenue), color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
-                            }
-                        }
-                    }
+Column(modifier = Modifier.weight(1f)) {
+    Text(
+        "TOTAL EXPENSE",
+        color = LedgerColors.SlateGrayText,
+        fontSize = 9.sp
+    )
+
+    Text(
+        formatCurrency(totalExpense),
+        color = Color.White,
+        fontSize = 14.sp,
+        fontWeight = FontWeight.Bold
+    )
                 }
+            }
+        }
+    }
                 
                 Spacer(modifier = Modifier.height(14.dp))
 
@@ -1306,17 +1316,36 @@ fun DebitsView(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
-                            Text("TOTAL EXPENSE", color = LedgerColors.SlateGrayText, fontSize = 9.sp)
-                            Text(formatCurrency(totalExpense)), color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
-                        }
+    Text(
+        "TOTAL EXPENSE",
+        color = LedgerColors.SlateGrayText,
+        fontSize = 9.sp
+    )
+
+    Text(
+        formatCurrency(totalExpense),
+        color = Color.White,
+        fontSize = 14.sp,
+        fontWeight = FontWeight.Bold
+    )
+}
                         Column(modifier = Modifier.weight(1f)) {
                             Text("CLEARED", color = LedgerColors.NeonGreen, fontSize = 9.sp)
-                            Text(formatCurrency(pendingExpense)), color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                            Text(
+    formatCurrency(clearedExpense),
+    color = Color.White,
+    fontSize = 14.sp,
+    fontWeight = FontWeight.Bold
+)
                         }
                         Column(modifier = Modifier.weight(1f)) {
                             Text("PENDING", color = LedgerColors.AmberOrange, fontSize = 9.sp)
-                            Text(formatCurrency(pendingExpense)), color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
-                        }
+                            Text(
+    formatCurrency(pendingExpense),
+    color = Color.White,
+    fontSize = 14.sp,
+    fontWeight = FontWeight.Bold
+)
                     }
                 }
             }
@@ -1489,15 +1518,30 @@ fun InvestmentView(
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text("TOTAL INVESTED", color = LedgerColors.SlateGrayText, fontSize = 9.sp)
-                            Text(formatCurrency(totalInvestment)), color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                            Text(
+    formatCurrency(totalInvestment),
+    color = Color.White,
+    fontSize = 14.sp,
+    fontWeight = FontWeight.Bold
+)
                         }
                         Column(modifier = Modifier.weight(1f)) {
                             Text("CLEARED", color = LedgerColors.NeonGreen, fontSize = 9.sp)
-                            Text(formatCurrency(clearedInvestment)), color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                            Text(
+    formatCurrency(clearedInvestment),
+    color = Color.White,
+    fontSize = 14.sp,
+    fontWeight = FontWeight.Bold
+)
                         }
                         Column(modifier = Modifier.weight(1f)) {
                             Text("PENDING", color = LedgerColors.AmberOrange, fontSize = 9.sp)
-                            Text(formatCurrency(pendingInvestment)), color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                            Text(
+    formatCurrency(pendingInvestment),
+    color = Color.White,
+    fontSize = 14.sp,
+    fontWeight = FontWeight.Bold
+)
                         }
                     }
                 }
